@@ -1,0 +1,133 @@
+:root {
+  /* Colors */
+  --bg-primary: #fdfbf7;
+  --bg-secondary: #f5f2ed;
+  --bg-tertiary: #ede9e1;
+  
+  --text-primary: #2d2a26;
+  --text-secondary: #6b645c;
+  --text-muted: #9c9287;
+  
+  --accent-primary: #8c7851; /* Muted Gold/Brown */
+  --accent-hover: #726242;
+  --accent-soft: #f4efdf;
+  
+  --slate-primary: #475569;
+  --slate-hover: #334155;
+  
+  --border-color: #e5e1da;
+  --border-focus: #8c7851;
+  
+  --error: #af4c4c;
+  --success: #677045;
+  
+  /* Spacing & Radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input, textarea {
+  font-family: inherit;
+  outline: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 0.5rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+
+.text-center { text-align: center; }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+
+/* Responsive Utilities */
+.mobile-only {
+  display: none;
+}
+
+.desktop-only-inline {
+  display: inline;
+}
+
+.desktop-only-block {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: flex;
+  }
+  
+  .desktop-only-inline,
+  .desktop-only-block {
+    display: none !important;
+  }
+  
+  .container {
+    padding: 0 1rem;
+  }
+}

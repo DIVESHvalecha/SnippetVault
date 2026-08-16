@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snippet Vault</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="16 18 22 12 16 6"/>
+        <polyline points="8 6 2 12 8 18"/>
+      </svg>
+      Snippet Vault
+    </div>
+  </header>
+
+  <!-- Loading -->
+  <div id="state-loading" class="state">
+    <div class="spinner"></div>
+    <p class="state-text">Checking session…</p>
+  </div>
+
+  <!-- Not signed in -->
+  <div id="state-auth" class="state hidden">
+    <div class="auth-icon">🔒</div>
+    <p class="auth-title">Not signed in</p>
+    <p class="auth-subtitle">Open Snippet Vault and log in first, then come back here.</p>
+    <button id="btn-open-app" class="btn btn-primary">Open Snippet Vault</button>
+  </div>
+
+  <!-- Save form — mirrors SnippetDetails modal fields exactly -->
+  <div id="state-form" class="state hidden">
+
+    <!-- Title -->
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input id="title" type="text" placeholder="Ex: React UseEffect Pattern" autocomplete="off" />
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description">Description</label>
+      <input id="description" type="text" placeholder="What does this snippet do?" autocomplete="off" />
+    </div>
+
+    <!-- Language + Folder row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="language">Language</label>
+        <select id="language">
+          <option value="javascript">JavaScript</option>
+          <option value="typescript">TypeScript</option>
+          <option value="python">Python</option>
+          <option value="java">Java</option>
+          <option value="css">CSS</option>
+          <option value="html">HTML</option>
+          <option value="sql">SQL</option>
+          <option value="bash">Bash</option>
+          <option value="json">JSON</option>
+          <option value="plaintext">Plain Text</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="folder">Folder <span class="optional">(optional)</span></label>
+        <select id="folder">
+          <option value="">No Folder</option>
+          <!-- Populated dynamically -->
+        </select>
+      </div>
+    </div>
+
+    <!-- Visibility toggle — same button style as SnippetDetails -->
+    <div class="form-group">
+      <label>Visibility</label>
+      <div class="visibility-options">
+        <button type="button" class="vis-btn active" data-value="public">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          Public
+        </button>
+        <button type="button" class="vis-btn" data-value="private">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          Private
+        </button>
+        <button type="button" class="vis-btn" data-value="group">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          Group Access
+        </button>
+      </div>
+    </div>
+
+    <!-- Group select — shown only when visibility = group -->
+    <div id="group-section" class="form-group">
+      <label for="group">Select Group</label>
+      <select id="group">
+        <option value="">Select a group…</option>
+        <!-- Populated dynamically -->
+      </select>
+    </div>
+
+    <!-- Code -->
+    <div class="form-group">
+      <label for="code">Code</label>
+      <textarea id="code" rows="8" spellcheck="false" placeholder="// Start coding here..."></textarea>
+    </div>
+
+    <!-- Error -->
+    <div id="error-msg" class="error-msg hidden"></div>
+
+    <!-- Save button -->
+    <button id="btn-save" class="btn btn-primary">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+        <polyline points="17 21 17 13 7 13 7 21"/>
+        <polyline points="7 3 7 8 15 8"/>
+      </svg>
+      Create Snippet
+    </button>
+  </div>
+
+  <!-- Success -->
+  <div id="state-success" class="state hidden">
+    <div class="success-icon">✅</div>
+    <p class="success-title">Snippet saved!</p>
+    <p class="success-subtitle">Your snippet has been added to Snippet Vault.</p>
+    <button id="btn-save-another" class="btn btn-secondary">Save Another</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
