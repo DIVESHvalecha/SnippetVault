@@ -25,8 +25,8 @@ public class SnippetRepository {
     JdbcTemplate jdbcTemplate;
 
     public Long createSnippet(String title, String description, String content,
-                              String language, String visibility,
-                              long userId, Long groupId) {
+            String language, String visibility,
+            long userId, Long groupId) {
 
         String query;
 
@@ -42,8 +42,7 @@ public class SnippetRepository {
 
             PreparedStatement ps = connection.prepareStatement(
                     query,
-                    Statement.RETURN_GENERATED_KEYS
-            );
+                    Statement.RETURN_GENERATED_KEYS);
 
             ps.setString(1, title);
             ps.setString(2, content);
@@ -62,15 +61,15 @@ public class SnippetRepository {
 
         }, keyHolder);
 
-        Long snippetId=  keyHolder.getKey().longValue();
+        Long snippetId = keyHolder.getKey().longValue();
 
         String query2 = "INSERT INTO snippet_versions\n" +
                 "(snippet_id, version_number, title, content, language, description, edited_by)\n" +
                 "VALUES (?, ?, ?, ?, ?, ?, ?);";
 
-        jdbcTemplate.update(query2,snippetId, 1, title, content, language, description, userId);
+        jdbcTemplate.update(query2, snippetId, 1, title, content, language, description, userId);
 
-        return  snippetId;
+        return snippetId;
     }
 
     public List<Snippets> getPublicSnippets() {
@@ -95,22 +94,24 @@ public class SnippetRepository {
 
     public Snippets getSnippetById(Long id, long userId) {
         String query = "select snippet_id, title, content, language, description, group_id, user_id, visibility,current_version, active_yn from snippets where active_yn = 1 and user_id = ? and snippet_id = ?";
-        return jdbcTemplate.queryForObject(query, new SnippetRowMapper() , userId, id);
+        return jdbcTemplate.queryForObject(query, new SnippetRowMapper(), userId, id);
     }
 
-    public void editSnippet(Long id, long userId, String title, String description, String content, String language, String visibility, Long groupId) {
+    public void editSnippet(Long id, long userId, String title, String description, String content, String language,
+            String visibility, Long groupId) {
         String query1 = "select current_version from snippets where snippet_id = ? and user_id = ? and active_yn = 1";
-        Integer currentVersion = jdbcTemplate.queryForObject(query1,Integer.class ,id, userId);
-        Integer newVersion = currentVersion+1;
+        Integer currentVersion = jdbcTemplate.queryForObject(query1, Integer.class, id, userId);
+        Integer newVersion = currentVersion + 1;
         String query2 = "INSERT INTO snippet_versions\n" +
                 "(snippet_id, version_number, title, content, language, description, edited_by)\n" +
                 "VALUES (?, ?, ?, ?, ?, ?, ?);";
         jdbcTemplate.update(query2, id, newVersion, title, content, language, description, userId);
 
-        if(groupId != null){
+        if (groupId != null) {
             String query = "update snippets set title = ?, content = ?, description = ?, language = ?, visibility = ?, group_id = ?, current_version = ? where snippet_id = ? and user_id = ?";
-            jdbcTemplate.update(query, title, content, description, language, visibility, groupId, newVersion, id, userId);
-        }else{
+            jdbcTemplate.update(query, title, content, description, language, visibility, groupId, newVersion, id,
+                    userId);
+        } else {
             String query = "update snippets set title = ?, content = ?, description = ?, language = ?, visibility = ?, current_version = ? where snippet_id = ? and user_id = ?";
             jdbcTemplate.update(query, title, content, description, language, visibility, newVersion, id, userId);
         }
@@ -148,7 +149,7 @@ public class SnippetRepository {
                 ")\n" +
                 "ORDER BY sv.version_number DESC;";
 
-        return jdbcTemplate.query(query, (rs, rownum)->{
+        return jdbcTemplate.query(query, (rs, rownum) -> {
             SnippetVersionHistory history = new SnippetVersionHistory();
             history.setVersionNumber(rs.getLong("version_number"));
             history.setEditedBy(rs.getLong("edited_by"));
@@ -207,7 +208,7 @@ public class SnippetRepository {
                 ");";
 
         try {
-            return jdbcTemplate.queryForObject(query,(rs, rowNum) ->{
+            return jdbcTemplate.queryForObject(query, (rs, rowNum) -> {
                 Snippets snippet = new Snippets();
                 snippet.setTitle(rs.getString("title"));
                 snippet.setContent(rs.getString("content"));
@@ -216,8 +217,8 @@ public class SnippetRepository {
                 snippet.setVisibility("PRIVATE");
                 snippet.setGroupId(null);
                 snippet.setFolderId(null);
-                return  snippet;
-            } , id, versionNumber, userId, userId);
+                return snippet;
+            }, id, versionNumber, userId, userId);
 
         } catch (EmptyResultDataAccessException e) {
             throw new RuntimeException("Snippet version not found or access denied");
