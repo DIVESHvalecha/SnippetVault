@@ -1,0 +1,31 @@
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Secrets — never commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+application-local.properties
+application-secret.properties
+
+# Build output
+SnippetVault/build/
+SnippetVault/out/
+SnippetVault/.gradle/
+SnippetValut-Frontend/node_modules/
+SnippetValut-Frontend/dist/
+
+# Local databases and logs
+*.log
+logs/
+
+# Personal documents (resumes, exports) — not part of the project
+*.pdf
+~$*

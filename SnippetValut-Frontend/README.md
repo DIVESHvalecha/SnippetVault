@@ -1,16 +1,65 @@
-# React + Vite
+# Snippet Vault — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + Vite single-page app for the Snippet Vault API. The root [README](../README.md) covers the full system; this file covers the frontend only.
 
-Currently, two official plugins are available:
+## Run
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+npm ci
+npm run dev
+```
 
-## React Compiler
+Open `http://localhost:5173`. The API must be running on `http://localhost:8080`.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Scripts
 
-## Expanding the ESLint configuration
+| Command | What it does | Current state |
+| --- | --- | --- |
+| `npm run dev` | Vite dev server with HMR. | Works. |
+| `npm run build` | Production build into `dist/`. | Passes. |
+| `npm run preview` | Serve the production build locally. | Works after a build. |
+| `npm run lint` | ESLint over the project. | Fails: 29 errors, 2 warnings. |
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Structure
+
+```text
+src/
+├── components/
+│   ├── common/      Button, Input, Modal, Toast, folder/group modals
+│   ├── layout/      Navbar, Sidebar
+│   └── snippets/    SnippetCard, SnippetDetails, EditorWrapper, version history
+├── context/         AuthContext, GroupContext, SnippetContext
+├── pages/
+│   ├── Auth/        Login, Signup, ForgotPassword, ResetPassword
+│   └── Dashboard/   Dashboard
+├── services/        fetch wrappers for auth, snippets, groups
+└── utils/           mockData fallback
+```
+
+## API configuration
+
+The API base URL is hardcoded in `src/services/auth.js`, `src/services/snippet.js`, and `src/services/group.js`:
+
+```js
+const BASE_URL = 'http://localhost:8080';
+```
+
+There is no `.env` support. Change all three files if the API moves.
+
+## Authentication
+
+Login uses Spring Security's form endpoint (`application/x-www-form-urlencoded`), and the browser stores the `JSESSIONID` cookie. Requests use `credentials: 'include'`. The user's email is also cached in `localStorage` under `snippet_vault_user` for UI state.
+
+## Known limitations
+
+- `npm run lint` is red; `npm run build` is the reliable check.
+- The dashboard search is client-side substring matching, not semantic search.
+- The snippet list silently falls back to `src/utils/mockData.js` if fetching throws.
+- `getSnippetById` on the backend is owner-only, so opening another user's public snippet relies on data already loaded in the feed.
+- No frontend tests.
+
+## Related docs
+
+- [Getting started](../docs/getting-started.md)
+- [API reference](../docs/api.md)
+- [Troubleshooting](../docs/troubleshooting.md)
